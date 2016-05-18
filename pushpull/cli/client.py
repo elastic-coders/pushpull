@@ -15,16 +15,18 @@ def client():
 
 @click.command()
 @click.argument('url')
-def challenge_websocket(url):
+@click.argument('name')
+def challenge_websocket(url, name):
     logging.basicConfig(level=logging.DEBUG)
-    click.echo(asyncio.get_event_loop().run_until_complete(websocket_client.challenge(url, sys.stdin, sys.stdout)))
+    click.echo(asyncio.get_event_loop().run_until_complete(websocket_client.challenge(url, name, sys.stdin, sys.stdout)))
 client.add_command(challenge_websocket)
 
 
 @click.command()
-def challenge_amqp():
+@click.argument('name')
+def challenge_amqp(name):
     logging.basicConfig(level=logging.DEBUG)
-    click.echo(asyncio.get_event_loop().run_until_complete(amqp_client.challenge(sys.stdin)))
+    click.echo(asyncio.get_event_loop().run_until_complete(amqp_client.challenge(name, sys.stdin, sys.stdout)))
 client.add_command(challenge_amqp)
 
 
