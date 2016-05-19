@@ -1,0 +1,9 @@
+os:
+  - linux
+language: python
+python:
+  - "3.5"
+script: tox
+services:
+  - rabbitmq
+sudo: required
