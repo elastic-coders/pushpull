@@ -3,6 +3,7 @@ Pushpull websocket server
 """
 import logging
 import asyncio
+import random
 
 import aiohttp
 import aiohttp.web
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 async def websocket_rabbitmq_gateway(request):
+    # TODO: AUTHENTICATION
     name = request.GET.get('name')
     if not name:
         return aiohttp.web.Response(body=b'name is required', status=400)
@@ -21,10 +23,14 @@ async def websocket_rabbitmq_gateway(request):
     logger.debug('websocket connection open')
     try:
         await ws.prepare(request)
-        async with Exchanger(name, Exchanger.ROLE_WS) as (amqp_sender, amqp_receiver):
-            send_coro = asyncio.ensure_future(send_from_amqp_to_websocket(amqp_receiver, ws))
-            receive_coro = asyncio.ensure_future(send_from_websocket_to_amqp(ws, amqp_sender))
+        # TODO: get client_id from request
+        async with Exchanger(name, Exchanger.ROLE_WS, client_id=random.randint(1, 100)) as (amqp_sender, amqp_receiver):
+            send_coro = send_from_amqp_to_websocket(amqp_receiver, ws)
+            receive_coro = send_from_websocket_to_amqp(ws, amqp_sender)
             await asyncio.gather(receive_coro, send_coro)
+    except Exception as exc:
+        logger.exception('exception while handling request')
+        raise
     finally:
         logger.debug('websocket connection closing')
         await ws.close()

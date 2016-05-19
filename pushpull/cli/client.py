@@ -18,7 +18,8 @@ def client():
 @click.argument('name')
 def challenge_websocket(url, name):
     logging.basicConfig(level=logging.DEBUG)
-    click.echo(asyncio.get_event_loop().run_until_complete(websocket_client.challenge(url, name, sys.stdin, sys.stdout)))
+    loop = asyncio.get_event_loop()
+    click.echo(loop.run_until_complete(websocket_client.challenge(url, name, sys.stdin, sys.stdout, loop)))
 client.add_command(challenge_websocket)
 
 

@@ -22,3 +22,5 @@ build
 *.egg
 *.manifest
 *.spec
+/.tox
+/.cache
