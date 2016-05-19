@@ -7,3 +7,4 @@ script: tox
 services:
   - rabbitmq
 sudo: required
+install: "pip install tox"
