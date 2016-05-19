@@ -2,6 +2,8 @@
 
 **AN EXPERIMENT**
 
+[![Build Status](https://travis-ci.org/elastic-coders/pushpull.svg?branch=master)](https://travis-ci.org/elastic-coders/pushpull)
+
 Websocket to message broker gateway for servers
 
 ```
