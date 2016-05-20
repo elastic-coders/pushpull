@@ -7,4 +7,4 @@ script: tox
 services:
   - rabbitmq
 sudo: required
-install: "pip install tox"
+install: "pip install tox-travis"
