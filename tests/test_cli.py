@@ -5,19 +5,19 @@ import aiohttp
 import pytest
 
 
-@pytest.mark.run_loop
-async def test_client_server_down(loop, websocket_cli):
+@pytest.mark.asyncio
+async def test_client_server_down(event_loop, websocket_cli):
     challenge, inp, out = websocket_cli
     with pytest.raises(aiohttp.errors.ClientOSError):
-        await asyncio.wait_for(challenge, timeout=1, loop=loop)
+        await asyncio.wait_for(challenge, timeout=1, loop=event_loop)
 
 
+@pytest.mark.asyncio
 @pytest.mark.skip(reason='TODO')
-@pytest.mark.run_loop
-async def test_client_server_send_one(loop, websocket_cli, websocket_server):
+async def test_client_server_send_one(event_loop, websocket_cli, websocket_server):
     challenge, inp, out = websocket_cli
     with mock.patch('pushpull.websocket.client.logger') as logger:
         inp.write('hey')
         inp.write('\n')
-        await asyncio.wait_for(challenge, timeout=1, loop=loop)
+        await asyncio.wait_for(challenge, timeout=1, loop=event_loop)
         assert logger.debug.n_calls == 1
