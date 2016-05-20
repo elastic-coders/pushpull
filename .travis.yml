@@ -3,7 +3,7 @@ os:
 language: python
 python:
   - "3.5"
-script: tox
+script: "py.test tests"
 services:
   - rabbitmq
 sudo: required
