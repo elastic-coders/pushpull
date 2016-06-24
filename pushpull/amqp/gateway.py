@@ -12,8 +12,7 @@ class Exchanger:
     ROLE_WS = 1
     ROLE_APP = 2
 
-    def __init__(self, name, role, client_id=0, **connection_params):
-        self._conn_params = connection_params
+    def __init__(self, name, role, client_id=0):
         if role not in [self.ROLE_WS, self.ROLE_APP]:
             raise ValueError('bad role {}'.format(role))
         self.role = role
@@ -22,7 +21,9 @@ class Exchanger:
 
     async def __aenter__(self):
         logger.debug('connecting with role {}'.format(self.role))
-        self._conn = await asynqp.connect(**self._conn_params)
+        from .. import config
+        params = config.get_amqp_conn_params()
+        self._conn = await asynqp.connect(**params)
         self._chan = await self._conn.open_channel()
         app_routing_key = '{}.app'.format(self.name)
         app_exchange = await self._chan.declare_exchange(app_routing_key, 'fanout')
