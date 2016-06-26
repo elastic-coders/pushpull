@@ -23,6 +23,8 @@ class Exchanger:
     async def __aenter__(self):
         logger.debug('connecting with role {}'.format(self.role))
         params = config.get_amqp_conn_params()
+        params['login'] = params.pop('username')
+        params['virtualhost'] = params.pop('virtual_host')
         self._transport, self._protocol = await aioamqp.connect(**params)
         # TODO: handle reconnect awaiting from self._conn
         self._chan = await self._protocol.channel()

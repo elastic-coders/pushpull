@@ -34,39 +34,15 @@ def get_url_path():
 
 
 def get_amqp_conn_params():
-    url = BROKER_URL or 'amqp://guest:guest@localhost:5672/'
-    url_chunks = urllib.parse.urlparse(url)
-    if '@' not in url_chunks.netloc:
-        host_port = url_chunks.netloc
-        username, password = None, None
-    else:
-        auth, host_port = url_chunks.netloc.split('@')
-        if ':' in auth:
-            username, password = auth.split(':')
-        else:
-            username, password = None, None
-    if not username:
-        username = 'guest'
-    if not password:
-        password = 'guest'
-    if ':' in host_port:
-        host, port = host_port.split(':')
-    else:
-        host = host_port
-        port = None
-    if not port:
-        port = 5672
-    else:
-        port = int(port)
-    path = url_chunks.path
-    if not path:
-        path = '/'
+    url_string = BROKER_URL or 'amqp://guest:guest@localhost:5672/'
+    url = urllib.parse.urlparse(url_string)
     return {
-        'host': host,
-        'port': port,
-        'username': username,
-        'password': password,
-        'virtual_host': path,
+        'host': url.hostname or 'localhost',
+        'port': url.port,
+        'username': url.username or 'guest',
+        'password': url.password or 'guest',
+        'virtual_host': url.path[1:] if len(url.path) > 1 else '/',
+        'ssl': url.scheme == 'amqps'
     }
 
 
