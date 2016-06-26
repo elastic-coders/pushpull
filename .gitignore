@@ -24,3 +24,5 @@ build
 *.spec
 /.tox
 /.cache
+/wheelhouse-app
+/wheelhouse

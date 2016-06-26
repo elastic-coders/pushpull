@@ -8,7 +8,7 @@ import random
 import aiohttp
 import aiohttp.web
 
-from ..amqp.gateway import Exchanger
+from ..amqp.gateway.driver_aioamqp import Exchanger
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,6 @@ async def websocket_rabbitmq_gateway(request):
             await asyncio.gather(receive_coro, send_coro)
     except Exception as exc:
         logger.exception('exception while handling request')
-        raise
     finally:
         logger.debug('websocket connection closing')
         await ws.close()

@@ -1,0 +1,17 @@
+/virtual*
+/dist
+/.tox
+/.cache
+__pycache__
+*.pyc
+/static
+/build
+/develop-eggs
+/dist
+/eggs
+/sdist
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+

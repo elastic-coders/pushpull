@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import pip
 
 install_reqs = pip.req.parse_requirements('requirements.txt',
@@ -8,7 +8,7 @@ reqs = [str(ir.req) for ir in install_reqs]
 setup(
     name='pushpull',
     version='0.0.1',
-    packages=['pushpull'],
+    packages=find_packages(),
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Intended Audience :: Developers',
