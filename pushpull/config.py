@@ -6,9 +6,11 @@ try:
 except ImportError:
     WEBSOCKET_URL = os.environ.get('PUSHPULL_WEBSOCKET_URL', '')
     BROKER_URL = os.environ.get('PUSHPULL_BROKER_URL', '')
+    CORS_ALLOWED_ORIGINS = os.environ.get('PUSHPULL_CORS_ALLOWED_ORIGINS', '')
 else:
     WEBSOCKET_URL = settings.PUSHPULL_WEBSOCKET_URL
     BROKER_URL = settings.PUSHPULL_BROKER_URL
+    CORS_ALLOWED_ORIGINS = settings.PUSHPULL_CORS_ALLOWED_ORIGINS
 
 
 def get_host_port():
@@ -66,3 +68,13 @@ def get_amqp_conn_params():
         'password': password,
         'virtual_host': path,
     }
+
+
+def get_cors_allowed_origins():
+    if CORS_ALLOWED_ORIGINS:
+        return CORS_ALLOWED_ORIGINS.split(',')
+    return []
+
+
+def get_cors_allow_credentials():
+    return True
