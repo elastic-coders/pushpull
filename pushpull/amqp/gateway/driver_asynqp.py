@@ -28,11 +28,12 @@ class Exchanger:
         app_exchange_name = 'pushpull.app'
         app_routing_key = ''
         ws_exchange_name = 'pushpull.ws'
-        ws_routing_key = 'pushpull.{}.ws'.format(self.name)
+        ws_routing_key = 'pushpull.ws.{}'.format(self.name)
         app_exchange = await self._chan.declare_exchange(app_exchange_name, 'fanout')
         ws_exchange = await self._chan.declare_exchange(ws_exchange_name, 'direct')
         if self.role == self.ROLE_WS:
-            receive_queue = await self._chan.declare_queue('pushpull.{}.ws.{}'.format(self.name, self.client_id))
+            receive_queue_name = '{}.{}'.format(ws_routing_key, self.client_id)
+            receive_queue = await self._chan.declare_queue(receive_queue_name)
             await receive_queue.bind(ws_exchange, ws_routing_key)
             send_exchange = app_exchange
             send_routing_key = app_routing_key

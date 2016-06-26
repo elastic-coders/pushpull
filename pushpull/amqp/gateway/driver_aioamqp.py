@@ -31,11 +31,11 @@ class Exchanger:
         app_exchange_name = 'pushpull.app'
         app_routing_key = ''
         ws_exchange_name = 'pushpull.ws'
-        ws_routing_key = 'pushpull.{}.ws'.format(self.name)
+        ws_routing_key = 'pushpull.ws.{}'.format(self.name)
         await self._chan.exchange(app_exchange_name, 'fanout', durable=True)
         await self._chan.exchange(ws_exchange_name, 'direct', durable=True)
         if self.role == self.ROLE_WS:
-            receive_queue_name = 'pushpull.{}.ws.{}'.format(self.name, self.client_id)
+            receive_queue_name = '{}.{}'.format(ws_routing_key, self.client_id)
             await self._chan.queue(receive_queue_name, exclusive=True, durable=False)
             await self._chan.queue_bind(
                 exchange_name=ws_exchange_name,
@@ -62,7 +62,7 @@ class Exchanger:
         logger.debug('closing connection and channel %r %r', exc_type, exc_value)
         try:
             await self._chan.close()
-            await self._conn.close()
+            await self._protocol.close()
         except:
             logger.error('error closing')
 
