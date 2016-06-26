@@ -8,7 +8,7 @@ import random
 import aiohttp
 import aiohttp.web
 
-from ..amqp.gateway import Exchanger
+from ..amqp.gateway.driver_aioamqp import Exchanger
 
 
 logger = logging.getLogger(__name__)

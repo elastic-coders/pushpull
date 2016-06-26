@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from .gateway import Exchanger
+from .gateway.driver_aioamqp import Exchanger
 from ..linereader import FdLineReader
 
 logger = logging.getLogger(__name__)

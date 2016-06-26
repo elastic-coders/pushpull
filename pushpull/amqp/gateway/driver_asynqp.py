@@ -3,6 +3,7 @@ import asyncio
 
 import asynqp
 
+from ... import config
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,6 @@ class Exchanger:
 
     async def __aenter__(self):
         logger.debug('connecting with role {}'.format(self.role))
-        from .. import config
         params = config.get_amqp_conn_params()
         self._conn = await asynqp.connect(**params)
         self._chan = await self._conn.open_channel()
