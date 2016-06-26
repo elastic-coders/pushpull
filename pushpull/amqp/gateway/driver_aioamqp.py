@@ -28,12 +28,12 @@ class Exchanger:
         self._transport, self._protocol = await aioamqp.connect(**params)
         # TODO: handle reconnect awaiting from self._conn
         self._chan = await self._protocol.channel()
-        app_routing_key = '{}.app'.format(self.name)
+        app_routing_key = 'pushpull.{}.app'.format(self.name)
         await self._chan.exchange(app_routing_key, 'fanout', durable=True)
-        ws_routing_key = '{}.ws'.format(self.name)
+        ws_routing_key = 'pushpull.{}.ws'.format(self.name)
         await self._chan.exchange(ws_routing_key, 'direct', durable=True)
         if self.role == self.ROLE_WS:
-            receive_queue_name = '{}.ws.{}'.format(self.name, self.client_id)
+            receive_queue_name = 'pushpull.{}.ws.{}'.format(self.name, self.client_id)
             await self._chan.queue(receive_queue_name, durable=True)
             await self._chan.queue_bind(
                 exchange_name=app_routing_key,
@@ -42,7 +42,7 @@ class Exchanger:
             )
             send_exchange_name = send_routing_key = ws_routing_key
         if self.role == self.ROLE_APP:
-            receive_queue_name = '{}.app'.format(self.name)
+            receive_queue_name = 'pushpull.{}.app'.format(self.name)
             await self._chan.queue(receive_queue_name, durable=True)
             await self._chan.queue_bind(
                 exchange_name=ws_routing_key,
