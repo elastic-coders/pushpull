@@ -25,20 +25,22 @@ class Exchanger:
         params = config.get_amqp_conn_params()
         self._conn = await asynqp.connect(**params)
         self._chan = await self._conn.open_channel()
-        app_routing_key = 'pushpull.{}.app'.format(self.name)
-        app_exchange = await self._chan.declare_exchange(app_routing_key, 'fanout')
+        app_exchange_name = 'pushpull.app'
+        app_routing_key = ''
+        ws_exchange_name = 'pushpull.ws'
         ws_routing_key = 'pushpull.{}.ws'.format(self.name)
-        ws_exchange = await self._chan.declare_exchange(ws_routing_key, 'direct')
+        app_exchange = await self._chan.declare_exchange(app_exchange_name, 'fanout')
+        ws_exchange = await self._chan.declare_exchange(ws_exchange_name, 'direct')
         if self.role == self.ROLE_WS:
             receive_queue = await self._chan.declare_queue('pushpull.{}.ws.{}'.format(self.name, self.client_id))
-            await receive_queue.bind(app_exchange, app_routing_key)
-            send_exchange = ws_exchange
-            send_routing_key = ws_routing_key
-        if self.role == self.ROLE_APP:
-            receive_queue = await self._chan.declare_queue('pushpull.{}.app'.format(self.name))
             await receive_queue.bind(ws_exchange, ws_routing_key)
             send_exchange = app_exchange
             send_routing_key = app_routing_key
+        if self.role == self.ROLE_APP:
+            receive_queue = await self._chan.declare_queue('pushpull.app')
+            await receive_queue.bind(app_exchange, app_routing_key)
+            send_exchange = ws_exchange
+            send_routing_key = ws_routing_key
         logger.debug('connected ok')
         return Sender(send_exchange, send_routing_key), Receiver(receive_queue)
 
