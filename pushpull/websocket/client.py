@@ -11,8 +11,13 @@ logger = logging.getLogger(__name__)
 
 async def challenge(url, name, fd_in, fd_out, loop=None):
     with aiohttp.ClientSession(loop=loop) as session:
-        async with session.ws_connect('{}?name={}'.format(url, name)) as ws:
+        async with session.ws_connect('{}?name={}'.format(url, name), headers={'Origin': 'localhost'}) as ws:
             logger.debug('opening websocket')
+            if logger.isEnabledFor(logging.DEBUG):
+                for header in ('Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials',
+                               'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers',
+                               'Access-Control-Expose-Headers'):
+                    logger.debug('CORS header {} origin: {!r}'.format(header, ws._response.headers.get(header)))
             sender = send_from_fd_to_ws(fd_in, ws, loop=loop)
             receiver = send_from_ws_to_fd(ws, fd_out)
             done, pending = await asyncio.wait([sender, receiver], return_when=asyncio.FIRST_COMPLETED)
