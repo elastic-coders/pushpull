@@ -37,11 +37,13 @@ class Exchanger(ExchangerBase):
         return Sender(send_exchange, send_routing_key), Receiver(receive_queue)
 
     async def __aexit__(self, exc_type, exc_value, traceback):
-        logger.debug('closing connection and channel %r %r', exc_type, exc_value)
+        logger.debug('closing connection and channel')
         try:
             await self._chan.close()
             await self._conn.close()
-        except:
+        except asyncio.CancelledError:
+            pass
+        except Exception:
             logger.error('error closing')
 
 

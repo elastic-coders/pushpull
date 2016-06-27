@@ -52,10 +52,11 @@ class Exchanger(ExchangerBase):
     async def __aexit__(self, exc_type, exc_value, traceback):
         logger.debug('closing connection and channel %r %r', exc_type, exc_value)
         try:
-            await self._chan.close()
             await self._protocol.close()
-        except:
-            logger.error('error closing')
+        except asyncio.CancelledError:
+            pass
+        except Exception:
+            logger.exception('error closing')
 
 
 class Sender:

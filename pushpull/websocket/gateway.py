@@ -32,10 +32,10 @@ async def websocket_rabbitmq_gateway(request):
                 [receive_coro, send_coro, ping_coro],
                 return_when=asyncio.FIRST_COMPLETED
             )
-            logger.info('exiting due to done coroutines {:r}'.format(done))
+            logger.info('exiting due to done coroutines %r', done)
             for coro in pending:
                 coro.cancel()
-    except Exception as exc:
+    except Exception:
         logger.exception('exception while handling request')
     finally:
         logger.debug('websocket connection closing')
