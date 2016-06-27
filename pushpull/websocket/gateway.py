@@ -9,7 +9,7 @@ import aiohttp
 import aiohttp.web
 
 from ..amqp.gateway.driver_aioamqp import Exchanger
-
+from .. import config
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,14 @@ async def websocket_rabbitmq_gateway(request):
         async with Exchanger(name, Exchanger.ROLE_WS, client_id=random.randint(1, 100)) as (amqp_sender, amqp_receiver):
             send_coro = send_from_amqp_to_websocket(amqp_receiver, ws)
             receive_coro = send_from_websocket_to_amqp(ws, amqp_sender)
-            await asyncio.gather(receive_coro, send_coro)
+            ping_coro = send_ping_to_websocket(ws, config.get_ws_autoping_timeout())
+            done, pending = await asyncio.wait(
+                [receive_coro, send_coro, ping_coro],
+                return_when=asyncio.FIRST_COMPLETED
+            )
+            logger.info('exiting due to done coroutines {:r}'.format(done))
+            for coro in pending:
+                coro.cancel()
     except Exception as exc:
         logger.exception('exception while handling request')
     finally:
@@ -50,6 +57,13 @@ async def send_from_amqp_to_websocket(receiver, ws):
     async for data in receiver:
         ws.send_str(data)
         # await ws._writer.writer.drain()
+
+
+async def send_ping_to_websocket(ws, timeout):
+    while True:
+        logger.debug('sending ping to ws %r', ws)
+        ws.ping()
+        await asyncio.sleep(timeout)
 
 
 async def echo_websocket(ws):

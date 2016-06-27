@@ -55,3 +55,7 @@ def get_cors_allowed_origins():
 
 def get_cors_allow_credentials():
     return True
+
+
+def get_ws_autoping_timeout():
+    return 15
