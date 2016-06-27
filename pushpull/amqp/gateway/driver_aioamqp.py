@@ -50,7 +50,7 @@ class Exchanger(ExchangerBase):
         )
 
     async def __aexit__(self, exc_type, exc_value, traceback):
-        logger.debug('closing connection and channel %r %r', exc_type, exc_value)
+        logger.debug('closing connection and channel')
         try:
             await self._protocol.close()
         except asyncio.CancelledError:
