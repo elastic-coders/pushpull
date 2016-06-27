@@ -21,5 +21,11 @@ setup(
     url='https://github.com/elastic-coders/pushpull/',
     license='MIT',
     include_package_data=True,
-    install_requires=reqs
+    install_requires=reqs,
+    entry_points={
+        'console_scripts': [
+            'pushpull-server = pushpull.cli.server:serve',
+            'pushpull-client = pushpull.cli.client:client',
+        ]
+    }
 )

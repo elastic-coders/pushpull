@@ -27,15 +27,15 @@ Websocket to message broker gateway for servers
 
 Run the websocket server:
 
-    python -m pushpull.cli.server
+    pushpull-server
 
 Run the CLI websocket client:
 
-    python -m pushpull.cli.client challenge_websocket http://localhost:8080/sock
+    pushpull-client challenge_websocket http://localhost:8080/ mario
 
 Run the CLI rabbitmq client:
 
-    python -m pushpull.cli.client challenge_amqp
+    pushpull-client challenge_amqp amqp://localhost/ mario
 
 # Build docker image
 

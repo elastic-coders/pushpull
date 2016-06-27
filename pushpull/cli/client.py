@@ -24,10 +24,11 @@ client.add_command(challenge_websocket)
 
 
 @click.command()
+@click.argument('url')
 @click.argument('name')
-def challenge_amqp(name):
+def challenge_amqp(url, name):
     logging.basicConfig(level=logging.DEBUG)
-    click.echo(asyncio.get_event_loop().run_until_complete(amqp_client.challenge(name, sys.stdin, sys.stdout)))
+    click.echo(asyncio.get_event_loop().run_until_complete(amqp_client.challenge(url, name, sys.stdin, sys.stdout)))
 client.add_command(challenge_amqp)
 
 

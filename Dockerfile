@@ -13,5 +13,5 @@ RUN python3.5 -m pip install --no-cache-dir --no-index -f wheelhouse-app --no-de
 RUN adduser --disabled-password --disabled-login --home /app --system -q app
 WORKDIR /app
 USER app
-ENTRYPOINT ["python3.5", "-m", "pushpull.cli.server"]
+ENTRYPOINT ["pushpull-server"]
 EXPOSE 8080

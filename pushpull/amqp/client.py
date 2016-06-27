@@ -7,8 +7,8 @@ from ..linereader import FdLineReader
 logger = logging.getLogger(__name__)
 
 
-async def challenge(name, fd_in, fd_out):
-    async with Exchanger(name, Exchanger.ROLE_APP) as (amqp_sender, amqp_receiver):
+async def challenge(url, name, fd_in, fd_out):
+    async with Exchanger(name, Exchanger.ROLE_APP, url=url) as (amqp_sender, amqp_receiver):
         sender = send_from_fd_to_amqp(fd_in, amqp_sender)
         receiver = send_from_amqp_to_fd(amqp_receiver, fd_out)
         _, pending = await asyncio.wait([sender, receiver], return_when=asyncio.FIRST_COMPLETED)

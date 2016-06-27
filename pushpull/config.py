@@ -33,9 +33,10 @@ def get_url_path():
     return path
 
 
-def get_amqp_conn_params():
-    url_string = BROKER_URL or 'amqp://guest:guest@localhost:5672/'
-    url = urllib.parse.urlparse(url_string)
+def get_amqp_conn_params(url=None):
+    if url is None:
+        url = BROKER_URL or 'amqp://guest:guest@localhost:5672/'
+    url = urllib.parse.urlparse(url)
     return {
         'host': url.hostname or 'localhost',
         'port': url.port,

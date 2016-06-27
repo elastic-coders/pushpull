@@ -4,34 +4,25 @@ import asyncio
 import aioamqp
 
 from ... import config
+from .driver_base import ExchangerBase
 
 logger = logging.getLogger(__name__)
 
 
-class Exchanger:
-
-    ROLE_WS = 1
-    ROLE_APP = 2
-
-    def __init__(self, name, role, client_id=0):
-        if role not in [self.ROLE_WS, self.ROLE_APP]:
-            raise ValueError('bad role {}'.format(role))
-        self.role = role
-        self.client_id = client_id
-        self.name = name
+class Exchanger(ExchangerBase):
 
     async def __aenter__(self):
         logger.debug('connecting with role {}'.format(self.role))
-        params = config.get_amqp_conn_params()
+        params = config.get_amqp_conn_params(self.url)
         params['login'] = params.pop('username')
         params['virtualhost'] = params.pop('virtual_host')
         self._transport, self._protocol = await aioamqp.connect(**params)
         # TODO: handle reconnect awaiting from self._conn
         self._chan = await self._protocol.channel()
-        app_exchange_name = 'pushpull.app'
-        app_routing_key = ''
-        ws_exchange_name = 'pushpull.ws'
-        ws_routing_key = 'pushpull.ws.{}'.format(self.name)
+        app_exchange_name = self.get_app_exchange_name()
+        app_routing_key = self.get_app_routing_key()
+        ws_exchange_name = self.get_ws_exchange_name()
+        ws_routing_key = self.get_ws_routing_key()
         await self._chan.exchange(app_exchange_name, 'fanout', durable=True)
         await self._chan.exchange(ws_exchange_name, 'direct', durable=True)
         if self.role == self.ROLE_WS:
