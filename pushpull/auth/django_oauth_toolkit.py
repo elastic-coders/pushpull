@@ -1,7 +1,9 @@
+import django
 from oauth2_provider.models import AccessToken
 
 
 def main():
+    django.setup()
     return authenticate
 
 
