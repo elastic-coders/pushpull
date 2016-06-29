@@ -19,11 +19,11 @@ async def challenge(url, user_id, fd_in, fd_out):
             task.cancel()
 
 
-async def authenticate(url, tokens):
+async def authenticate(url, authenticator):
     async with RPC(RPC.ROLE_APP, url=url) as (amqp_sender, amqp_receiver):
         async for message in amqp_receiver:
             authorization = auth.decode_authorization_request(message.body)
-            user = tokens.get(authorization)
+            user = await authenticator(authorization)
             if user is None:
                 logger.info('sending auth failure on auth %r', authorization)
                 await amqp_sender.send(auth.encode_authorization_error_reply(),

@@ -39,9 +39,9 @@ Run the CLI rabbitmq client:
 
 Run the CLI rabbitmq authenticator:
 
-    pushpull-client authenticate_amqp amqp://localhost/ user_db.txt
+    pushpull-client authenticate_amqp amqp://localhost/ pushpull.auth.simple_file:main,user_db.txt
 
-The user db is text file with on entry per line:
+The `user_db.txt` is a text file with one entry per line:
 
     user_id:username:user_token
 
