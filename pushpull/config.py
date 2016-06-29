@@ -1,16 +1,10 @@
 import urllib.parse
 import os
 
-try:
-    from django.conf import settings
-except ImportError:
-    WEBSOCKET_URL = os.environ.get('PUSHPULL_WEBSOCKET_URL', '')
-    BROKER_URL = os.environ.get('PUSHPULL_BROKER_URL', '')
-    CORS_ALLOWED_ORIGINS = os.environ.get('PUSHPULL_CORS_ALLOWED_ORIGINS', '')
-else:
-    WEBSOCKET_URL = getattr(settings, 'PUSHPULL_WEBSOCKET_URL', '')
-    BROKER_URL = getattr(settings, 'PUSHPULL_BROKER_URL', '')
-    CORS_ALLOWED_ORIGINS = getattr(settings, 'PUSHPULL_CORS_ALLOWED_ORIGINS', '')
+# TODO: more modular settings
+WEBSOCKET_URL = os.environ.get('PUSHPULL_WEBSOCKET_URL', '')
+BROKER_URL = os.environ.get('PUSHPULL_BROKER_URL', '')
+CORS_ALLOWED_ORIGINS = os.environ.get('PUSHPULL_CORS_ALLOWED_ORIGINS', '')
 
 
 def get_host_port():
