@@ -15,21 +15,33 @@ def client():
 
 @click.command()
 @click.argument('url')
-@click.argument('name')
-def challenge_websocket(url, name):
+@click.argument('token')
+def challenge_websocket(url, token):
     logging.basicConfig(level=logging.DEBUG)
     loop = asyncio.get_event_loop()
-    click.echo(loop.run_until_complete(websocket_client.challenge(url, name, sys.stdin, sys.stdout, loop)))
+    click.echo(loop.run_until_complete(websocket_client.challenge(url, token, sys.stdin, sys.stdout, loop)))
 client.add_command(challenge_websocket)
 
 
 @click.command()
 @click.argument('url')
-@click.argument('name')
-def challenge_amqp(url, name):
+@click.argument('user_id')
+def challenge_amqp(url, user_id):
     logging.basicConfig(level=logging.DEBUG)
-    click.echo(asyncio.get_event_loop().run_until_complete(amqp_client.challenge(url, name, sys.stdin, sys.stdout)))
+    click.echo(asyncio.get_event_loop().run_until_complete(amqp_client.challenge(url, user_id, sys.stdin, sys.stdout)))
 client.add_command(challenge_amqp)
+
+
+@click.command()
+@click.argument('url')
+@click.argument('db', type=click.File('r'))
+def authenticate_amqp(url, db):
+    logging.basicConfig(level=logging.DEBUG)
+    tokens = {
+        line.split(':')[-1].rstrip(): line.split(':')[:-1] for line in db.readlines()
+    }
+    click.echo(asyncio.get_event_loop().run_until_complete(amqp_client.authenticate(url, tokens)))
+client.add_command(authenticate_amqp)
 
 
 if __name__ == '__main__':

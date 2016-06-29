@@ -31,11 +31,21 @@ Run the websocket server:
 
 Run the CLI websocket client:
 
-    pushpull-client challenge_websocket http://localhost:8080/ mario
+    pushpull-client challenge_websocket http://localhost:8080/ user_token
 
 Run the CLI rabbitmq client:
 
-    pushpull-client challenge_amqp amqp://localhost/ mario
+    pushpull-client challenge_amqp amqp://localhost/ user_id
+
+Run the CLI rabbitmq authenticator:
+
+    pushpull-client authenticate_amqp amqp://localhost/ user_db.txt
+
+The user db is text file with on entry per line:
+
+    user_id:username:user_token
+
+
 
 # Build docker image
 
