@@ -5,7 +5,7 @@ import asyncio
 
 from .rpc.driver_aioamqp import RPC
 
-User = namedtuple('User', 'username,id')
+User = namedtuple('User', 'id,username')
 
 
 async def get_user_info(authorization, client_id=None):
@@ -45,15 +45,15 @@ def encode_authorization_error_reply():
     return json.dumps(None)
 
 
-def encode_authorization_reply(username, user_id):
-    return json.dumps({'username': username, 'id': user_id})
+def encode_authorization_reply(user_id, username):
+    return json.dumps({'id': user_id, 'username': username})
 
 
 def decode_authorization_reply(body):
     data = json.loads(body)
     if data is None:
         return None
-    return User(data['username'], data['id'])
+    return User(data['id'], data['username'])
 
 
 class AuthorizationError(Exception):
