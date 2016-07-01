@@ -25,8 +25,9 @@ class Exchanger(ExchangerBase):
         app_routing_key = self.get_app_routing_key()
         ws_exchange_name = self.get_ws_exchange_name()
         ws_routing_key = self.get_ws_routing_key()
-        await self._chan.exchange(app_exchange_name, 'fanout', durable=True)
-        await self._chan.exchange(ws_exchange_name, 'direct', durable=True)
+        ws_routing_key_bcast = self.get_ws_routing_key(broadcast=True)
+        await self._chan.exchange(app_exchange_name, 'direct', durable=True)
+        await self._chan.exchange(ws_exchange_name, 'topic', durable=True)
         if self.role == self.ROLE_WS:
             receive_queue_name = '{}.{}'.format(ws_routing_key, self.client_id)
             await self._chan.queue(receive_queue_name, exclusive=True, durable=False)
@@ -34,6 +35,11 @@ class Exchanger(ExchangerBase):
                 exchange_name=ws_exchange_name,
                 queue_name=receive_queue_name,
                 routing_key=ws_routing_key
+            )
+            await self._chan.queue_bind(
+                exchange_name=ws_exchange_name,
+                queue_name=receive_queue_name,
+                routing_key=ws_routing_key_bcast
             )
             send_exchange_name, send_routing_key = app_exchange_name, app_routing_key
         if self.role == self.ROLE_APP:

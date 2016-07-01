@@ -20,5 +20,7 @@ class ExchangerBase:
     def get_ws_exchange_name(self):
         return 'pushpull.ws'
 
-    def get_ws_routing_key(self):
+    def get_ws_routing_key(self, broadcast=False):
+        if broadcast:
+            return 'pushpull.ws'
         return 'pushpull.ws.{}'.format(self.name)
