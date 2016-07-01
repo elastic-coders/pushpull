@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 async def websocket_rabbitmq_gateway(request):
     authorization = decode_auth_querystring_param(request.GET)
     try:
+        # TODO: reuse amqp channel: here we open one, we close it and then we reopen another one with the
+        # Exchanger a few lines down
         user_info = await auth.get_user_info(authorization)
     except auth.NotAuthorized as exc:
         raise aiohttp.web_exceptions.HTTPUnauthorized() from exc
