@@ -47,6 +47,7 @@ async def send_from_ws_to_fd(ws, fd):
         if msg.tp == aiohttp.MsgType.text:
             logger.debug('sending data from ws to fd: %s', msg.data)
             fd.write(msg.data)
+            fd.flush()
         elif msg.tp == aiohttp.MsgType.error:
             logger.error('ws connection closed with exception %s', ws.exception())
             return
