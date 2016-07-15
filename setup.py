@@ -7,7 +7,7 @@ reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
     name='pushpull',
-    version='0.0.2a',
+    version='0.0.2',
     packages=find_packages(),
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
