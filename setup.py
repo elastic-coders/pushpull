@@ -7,7 +7,7 @@ reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
     name='pushpull',
-    version='0.0.1',
+    version='0.0.2',
     packages=find_packages(),
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
@@ -21,5 +21,11 @@ setup(
     url='https://github.com/elastic-coders/pushpull/',
     license='MIT',
     include_package_data=True,
-    install_requires=reqs
+    install_requires=reqs,
+    entry_points={
+        'console_scripts': [
+            'pushpull-server = pushpull.cli.server:serve',
+            'pushpull-client = pushpull.cli.client:client',
+        ]
+    }
 )

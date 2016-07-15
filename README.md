@@ -27,15 +27,25 @@ Websocket to message broker gateway for servers
 
 Run the websocket server:
 
-    python -m pushpull.cli.server
+    pushpull-server
 
 Run the CLI websocket client:
 
-    python -m pushpull.cli.client challenge_websocket http://localhost:8080/sock
+    pushpull-client challenge_websocket http://localhost:8080/ user_token
 
 Run the CLI rabbitmq client:
 
-    python -m pushpull.cli.client challenge_amqp
+    pushpull-client challenge_amqp amqp://localhost/ user_id
+
+Run the CLI rabbitmq authenticator:
+
+    pushpull-client authenticate_amqp amqp://localhost/ pushpull.auth.simple_file:main,user_db.txt
+
+The `user_db.txt` is a text file with one entry per line:
+
+    user_id:username:user_token
+
+
 
 # Build docker image
 

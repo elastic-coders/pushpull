@@ -3,32 +3,23 @@ import asyncio
 
 import asynqp
 
+from .driver_base import ExchangerBase
 from ... import config
 
 logger = logging.getLogger(__name__)
 
 
-class Exchanger:
-
-    ROLE_WS = 1
-    ROLE_APP = 2
-
-    def __init__(self, name, role, client_id=0):
-        if role not in [self.ROLE_WS, self.ROLE_APP]:
-            raise ValueError('bad role {}'.format(role))
-        self.role = role
-        self.client_id = client_id
-        self.name = name
+class Exchanger(ExchangerBase):
 
     async def __aenter__(self):
         logger.debug('connecting with role {}'.format(self.role))
-        params = config.get_amqp_conn_params()
+        params = config.get_amqp_conn_params(self.url)
         self._conn = await asynqp.connect(**params)
         self._chan = await self._conn.open_channel()
-        app_exchange_name = 'pushpull.app'
-        app_routing_key = ''
-        ws_exchange_name = 'pushpull.ws'
-        ws_routing_key = 'pushpull.ws.{}'.format(self.name)
+        app_exchange_name = self.get_app_exchange_name()
+        app_routing_key = self.get_app_routing_key()
+        ws_exchange_name = self.get_ws_exchange_name()
+        ws_routing_key = self.get_ws_routing_key()
         app_exchange = await self._chan.declare_exchange(app_exchange_name, 'fanout')
         ws_exchange = await self._chan.declare_exchange(ws_exchange_name, 'direct')
         if self.role == self.ROLE_WS:
@@ -46,11 +37,13 @@ class Exchanger:
         return Sender(send_exchange, send_routing_key), Receiver(receive_queue)
 
     async def __aexit__(self, exc_type, exc_value, traceback):
-        logger.debug('closing connection and channel %r %r', exc_type, exc_value)
+        logger.debug('closing connection and channel')
         try:
             await self._chan.close()
             await self._conn.close()
-        except:
+        except asyncio.CancelledError:
+            pass
+        except Exception:
             logger.error('error closing')
 
 

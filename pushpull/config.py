@@ -1,16 +1,10 @@
 import urllib.parse
 import os
 
-try:
-    from django.conf import settings
-except ImportError:
-    WEBSOCKET_URL = os.environ.get('PUSHPULL_WEBSOCKET_URL', '')
-    BROKER_URL = os.environ.get('PUSHPULL_BROKER_URL', '')
-    CORS_ALLOWED_ORIGINS = os.environ.get('PUSHPULL_CORS_ALLOWED_ORIGINS', '')
-else:
-    WEBSOCKET_URL = settings.PUSHPULL_WEBSOCKET_URL
-    BROKER_URL = settings.PUSHPULL_BROKER_URL
-    CORS_ALLOWED_ORIGINS = settings.PUSHPULL_CORS_ALLOWED_ORIGINS
+# TODO: more modular settings
+WEBSOCKET_URL = os.environ.get('PUSHPULL_WEBSOCKET_URL', '')
+BROKER_URL = os.environ.get('PUSHPULL_BROKER_URL', '')
+CORS_ALLOWED_ORIGINS = os.environ.get('PUSHPULL_CORS_ALLOWED_ORIGINS', '')
 
 
 def get_host_port():
@@ -33,9 +27,10 @@ def get_url_path():
     return path
 
 
-def get_amqp_conn_params():
-    url_string = BROKER_URL or 'amqp://guest:guest@localhost:5672/'
-    url = urllib.parse.urlparse(url_string)
+def get_amqp_conn_params(url=None):
+    if url is None:
+        url = BROKER_URL or 'amqp://guest:guest@localhost:5672/'
+    url = urllib.parse.urlparse(url)
     return {
         'host': url.hostname or 'localhost',
         'port': url.port,
@@ -54,3 +49,7 @@ def get_cors_allowed_origins():
 
 def get_cors_allow_credentials():
     return True
+
+
+def get_ws_autoping_timeout():
+    return 15

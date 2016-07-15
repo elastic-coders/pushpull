@@ -13,7 +13,9 @@ def serve(argv):
     cors.add(
         route,
         {
-            origin: aiohttp_cors.ResourceOptions(allow_credentials=True)
+            origin: aiohttp_cors.ResourceOptions(
+                allow_credentials=True,
+            )
             for origin in config.get_cors_allowed_origins()
         }
     )
