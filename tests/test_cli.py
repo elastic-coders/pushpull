@@ -12,8 +12,8 @@ async def test_client_server_down(event_loop, websocket_cli):
         await asyncio.wait_for(challenge, timeout=1, loop=event_loop)
 
 
-@pytest.mark.asyncio
 @pytest.mark.skip(reason='TODO')
+@pytest.mark.asyncio
 async def test_client_server_send_one(event_loop, websocket_cli, websocket_server):
     challenge, inp, out = websocket_cli
     with mock.patch('pushpull.websocket.client.logger') as logger:
