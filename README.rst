@@ -4,7 +4,7 @@ Pushpull
 A websocket to rabbitmq gateway
 ###############################
 
-.. image:: https://travis-ci.org/elastic-coders/pushpull.svg?branch=develop
+.. image:: https://travis-ci.org/elastic-coders/pushpull.svg?branch=master
     :target: https://travis-ci.org/elastic-coders/pushpull
 
 **BETA**
