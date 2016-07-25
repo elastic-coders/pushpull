@@ -4,6 +4,9 @@ Pushpull
 A websocket to rabbitmq gateway
 ###############################
 
+.. image:: https://travis-ci.org/elastic-coders/pushpull.svg?branch=develop
+    :target: https://travis-ci.org/elastic-coders/pushpull
+
 **BETA**
 
 Makes it easy to talk to websocket clients using rabbitmq queues.
