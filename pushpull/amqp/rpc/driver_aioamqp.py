@@ -35,7 +35,7 @@ class RPC(RPCBase):
                 routing_key=app_routing_key
             )
             send_exchange_name, send_routing_key, reply_to = '', None, None
-        logger.debug('connected ok')
+        logger.info('connected with role {} to ok'.format(self.role))
         return (
             Sender(self._chan, send_exchange_name, send_routing_key, reply_to=reply_to),
             Receiver(self._chan, receive_queue_name)

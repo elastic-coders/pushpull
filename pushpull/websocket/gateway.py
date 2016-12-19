@@ -49,7 +49,11 @@ async def websocket_rabbitmq_gateway(request):
             )
             logger.info('exiting due to done coroutines %r', done)
             for coro in pending:
+                logger.warning('cancelling pending coroutine %r', coro)
                 coro.cancel()
+            for coro in done:
+                result = coro.result()
+                logger.info('coroutine %r done, result: %r', coro, result)
     except Exception:
         logger.exception('exception while handling request')
     finally:
