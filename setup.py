@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme_f:
 
 setup(
     name='pushpull',
-    version='0.0.3',
+    version='0.0.4',
     packages=find_packages(),
     description='Websocket to message broker gateway',
     long_description=long_description,
