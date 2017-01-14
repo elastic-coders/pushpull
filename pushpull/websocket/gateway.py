@@ -47,17 +47,17 @@ async def websocket_rabbitmq_gateway(request):
                 [receive_coro, send_coro, ping_coro],
                 return_when=asyncio.FIRST_COMPLETED
             )
-            logger.info('exiting due to done coroutines %r', done)
+            logger.info('client id %s exiting due to done coroutines %r', client_id, done)
             for coro in pending:
-                logger.warning('cancelling pending coroutine %r', coro)
+                logger.warning('client id %s cancelling pending coroutine %r', client_id, coro)
                 coro.cancel()
             for coro in done:
                 result = coro.result()
-                logger.info('coroutine %r done, result: %r', coro, result)
+                logger.info('client id %s coroutine %r done, result: %r', client_id, coro, result)
     except Exception:
-        logger.exception('exception while handling request')
+        logger.exception('client id %s exception while handling request', client_id)
     finally:
-        logger.debug('websocket connection closing')
+        logger.debug('client id %s websocket connection closing', client_id)
         await ws.close()
         return ws
 
