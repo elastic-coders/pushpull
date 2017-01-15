@@ -40,20 +40,32 @@ async def websocket_rabbitmq_gateway(request):
     try:
         await ws.prepare(request)
         async with Exchanger(name, Exchanger.ROLE_WS, client_id=client_id) as (amqp_sender, amqp_receiver):
-            send_coro = send_from_amqp_to_websocket(amqp_receiver, ws)
-            receive_coro = send_from_websocket_to_amqp(ws, amqp_sender)
-            ping_coro = send_ping_to_websocket(ws, config.get_ws_autoping_timeout())
-            done, pending = await asyncio.wait(
-                [receive_coro, send_coro, ping_coro],
-                return_when=asyncio.FIRST_COMPLETED
-            )
-            logger.info('client id %s exiting due to done coroutines %r', client_id, done)
-            for coro in pending:
-                logger.warning('client id %s cancelling pending coroutine %r', client_id, coro)
-                coro.cancel()
-            for coro in done:
-                result = coro.result()
-                logger.info('client id %s coroutine %r done, result: %r', client_id, coro, result)
+            done = []
+            pending = [
+                asyncio.ensure_future(coro) for coro in [
+                    send_from_amqp_to_websocket(amqp_receiver, ws),
+                    send_from_websocket_to_amqp(ws, amqp_sender),
+                    send_ping_to_websocket(ws, config.get_ws_autoping_timeout())
+                ]
+            ]
+            try:
+                done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+            except asyncio.CancelledError:
+                logger.warning('client id %s exiging due to cancelling', client_id)
+            else:
+                logger.info('client id %s exiting due to done coroutines %r', client_id, done)
+            finally:
+                for coro in done:
+                    try:
+                        result = coro.result()
+                    except Exception as exc:
+                        logger.exception('client id %s coroutine %r done due to exception: %r', client_id, coro, exc)
+                    else:
+                        logger.info('client id %s coroutine %r done, result: %r', client_id, coro, result)
+                for coro in pending:
+                    logger.info('client id %s cancelling pending coroutine %r', client_id, coro)
+                    coro.cancel()
+                    await asyncio.sleep(0)
     except Exception:
         logger.exception('client id %s exception while handling request', client_id)
     finally:
