@@ -12,9 +12,13 @@ logger = logging.getLogger(__name__)
 
 async def challenge(url, user_id, fd_in, fd_out):
     async with Exchanger(user_id, Exchanger.ROLE_APP, url=url) as (amqp_sender, amqp_receiver):
-        sender = send_from_fd_to_amqp(fd_in, amqp_sender)
-        receiver = send_from_amqp_to_fd(amqp_receiver, fd_out)
-        _, pending = await asyncio.wait([sender, receiver], return_when=asyncio.FIRST_COMPLETED)
+        pending = [
+            asyncio.ensure_future(coro) for coro in [
+                send_from_fd_to_amqp(fd_in, amqp_sender),
+                send_from_amqp_to_fd(amqp_receiver, fd_out)
+            ]
+        ]
+        _, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
         for task in pending:
             task.cancel()
 
@@ -38,8 +42,9 @@ async def authenticate(url, authenticator):
 
 async def send_from_fd_to_amqp(fd, sender):
     async for line in FdLineReader(fd):
-        logger.debug('sending message %r', line)
-        await sender.send(line)
+        if line:
+            logger.debug('sending message %r', line)
+            await sender.send(line)
 
 
 async def send_from_amqp_to_fd(receiver, fd):

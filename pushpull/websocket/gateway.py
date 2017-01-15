@@ -78,7 +78,10 @@ async def send_from_websocket_to_amqp(ws, sender):
     async for msg in ws:
         if msg.tp == aiohttp.MsgType.text:
             logger.debug('got data: %s', msg.data)
-            await sender.send(msg.data)
+            if msg.data:
+                await sender.send(msg.data)
+            else:
+                logger.warning('refusing to send empty data')
         elif msg.tp == aiohttp.MsgType.error:
             logger.error('ws connection closed with exception %s', ws.exception())
             return
