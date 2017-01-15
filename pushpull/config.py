@@ -53,3 +53,7 @@ def get_cors_allow_credentials():
 
 def get_ws_autoping_timeout():
     return 15
+
+
+def get_periodic_auth_check_timeout():
+    return 150
