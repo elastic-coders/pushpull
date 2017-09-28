@@ -45,7 +45,7 @@ Run the websocket server::
 
 Run the CLI websocket client::
 
-    pushpull-client challenge_websocket http://localhost:8080/ user_token
+    pushpull-client challenge_websocket http://localhost:8080/pushpull user_token
 
 Run the CLI rabbitmq client::
 
