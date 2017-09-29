@@ -17,7 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 async def websocket_rabbitmq_gateway(request):
-    authorization = decode_auth_querystring_param(request.GET)
+    if config.AUTH_COOKIE != '':
+        authorization = request.cookies[config.AUTH_COOKIE];
+    else:
+        authorization = decode_auth_querystring_param(request.GET)
     try:
         # TODO: reuse amqp channel and maybe share it with the Exchanger
         user_info = await auth.get_user_info(authorization)
