@@ -63,15 +63,15 @@ The ``user_db.txt`` is a text file with one entry per line::
 Generating messages programmatically
 ####################################
 
-To pass a message to a WebSocket client through RabbitMQ you can use `pika` Python module:
+To pass a message to a WebSocket client through RabbitMQ you can use `pika` Python module::
 
-        connection = pika.BlockingConnection()
-        channel = connection.channel()
-        channel.basic_publish(exchange='pushpull.ws',
-                              # routing_key='pushpull.ws', # broadcast to all open WebSockets
-                              routing_key=('pushpull.ws.%d' % user_id),
-                              body='{"test": "Test"}')
-        connection.close()
+    connection = pika.BlockingConnection()
+    channel = connection.channel()
+    channel.basic_publish(exchange='pushpull.ws',
+                          # routing_key='pushpull.ws', # broadcast to all open WebSockets
+                          routing_key=('pushpull.ws.%d' % user_id),
+                          body='{"test": "Test"}')
+    connection.close()
 
 
 
