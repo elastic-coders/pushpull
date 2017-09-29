@@ -60,6 +60,20 @@ The ``user_db.txt`` is a text file with one entry per line::
     user_id:username:user_token
 
 
+Generating messages programmatically
+####################################
+
+To pass a message to a WebSocket client through RabbitMQ you can use `pika` Python module:
+
+        connection = pika.BlockingConnection()
+        channel = connection.channel()
+        channel.basic_publish(exchange='pushpull.ws',
+                              # routing_key='pushpull.ws', # broadcast to all open WebSockets
+                              routing_key=('pushpull.ws.%d' % user_id),
+                              body='{"test": "Test"}')
+        connection.close()
+
+
 
 Build docker image
 ##################
