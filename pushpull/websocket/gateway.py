@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 async def websocket_rabbitmq_gateway(request):
     if config.AUTH_COOKIE != '':
-        authorization = request.cookies[config.AUTH_COOKIE];
+        authorization = request.cookies.get(config.AUTH_COOKIE);
     else:
         authorization = decode_auth_querystring_param(request.GET)
     try:
