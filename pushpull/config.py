@@ -5,6 +5,7 @@ import os
 WEBSOCKET_URL = os.environ.get('PUSHPULL_WEBSOCKET_URL', '')
 BROKER_URL = os.environ.get('PUSHPULL_BROKER_URL', '')
 CORS_ALLOWED_ORIGINS = os.environ.get('PUSHPULL_CORS_ALLOWED_ORIGINS', '')
+AUTH_COOKIE = os.environ.get('PUSHPULL_AUTH_COOKIE', '')
 
 
 def get_host_port():
